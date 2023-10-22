@@ -11,9 +11,9 @@ import { generateUserName } from '../utils/utils';
 const Signup = () => {
     // const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
     const [addUser] = useMutation(CREATE_USER);
 
     const handleSignup = async () => {
@@ -21,7 +21,7 @@ const Signup = () => {
             const { data: { user }, error } = await supabase.auth.signUp({email:email, password:password});
             
             if (error) {
-                console.error('Signup error:', error.message);
+                setError('Signup error:'+ error.message);
             } else {
                 if (user?.id) {
                     addUser({ variables: { id: user?.id, user_name: generateUserName(user.user_metadata.name, email) + "#" +user.id.substring(0,4) } }).then(()=>navigate('/'))
@@ -49,14 +49,6 @@ const Signup = () => {
                     <span className="flex flex-1 flex-col gap-4 items-center px-4 py-2 font-medium">
                         <h1>SIGN UP</h1>
                         <input
-                            type="name"
-                            placeholder="Name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="w-full rounded-md border-0 py-1.5 pl-2 ring-2 ring-inset ring-white sm:text-sm sm:leading-6 outline-none bg-[transparent] font-medium"
-                            autoComplete='email'
-                        />
-                        <input
                             type="email"
                             placeholder="Email"
                             value={email}
@@ -71,7 +63,8 @@ const Signup = () => {
                             onChange={(e) => setPassword(e.target.value)}
                             className="w-full rounded-md border-0 py-1.5 pl-2 ring-2 ring-inset ring-white sm:text-sm sm:leading-0 outline-none bg-[transparent] font-bold"
                             autoComplete='current-password'
-                            />
+                        />
+                        <span>{error}</span>
                         <button onClick={handleSignup} className='rounded-md ring-2 ring-white w-full p-1'>Sign Up</button>
                     </span>
                     <span className='flex flex-col items-center gap-2 px-4 py-2'>
