@@ -7,18 +7,21 @@ import { useMutation } from "@apollo/client";
 import { UPDATE_USER } from "../utils/queries";
 import { addFollowing, removeFollowing } from "../slice/authSlice";
 
-interface SearchCard{
-    data:any
+/* This component creates user card */
+
+interface UserCard{
+    data:any // data for user card
 }
 
-const SearchCard: React.FC<SearchCard> = ({ data }) => {
+const UserCard: React.FC<UserCard> = ({ data }) => {
     
-    const following = useSelector((state: RootState) => state.auth.user?.following);
-    const userId = useSelector((state: RootState) => state.auth.user?.id);
-    const isFollowing = following?.includes(data.id);
-    const dispatch = useDispatch();
-    const [updateUser] = useMutation(UPDATE_USER);
+    const following = useSelector((state: RootState) => state.auth.user?.following); // get user followings from redux
+    const userId = useSelector((state: RootState) => state.auth.user?.id); // get user id from redux
+    const isFollowing = following?.includes(data.id); // check user is following the searched user
+    const dispatch = useDispatch(); // dispatch event for redux
+    const [updateUser] = useMutation(UPDATE_USER); // mutation for update user
 
+    // handle user followings
     const handleFollowing = () => {
         if (isFollowing) {
             dispatch(removeFollowing(data.id));
@@ -29,15 +32,15 @@ const SearchCard: React.FC<SearchCard> = ({ data }) => {
     
     useEffect(() => {
         if (following !== null) {
-            updateUser({variables:{"id":userId,"user":{"following":following}}})
+            updateUser({variables:{"id":userId,"user":{"following":following}}}) // update user followings
         }
-    },[following,updateUser])
+    },[following,updateUser, userId])
 
     return (
         <span className="flex p-2 h-20 items-center bg-white rounded-lg">
             <NavLink to={userId===data.id ? `/profile` : `/user/${data.id}`} className="flex flex-1 gap-4 justify-center items-center">
             {
-                data.photo === null ? <User className='w-16 h-16 bg-white rounded-full stroke-blue' /> : <img src={`https://qgwjrqfxjnfydbioujcu.supabase.co/storage/v1/object/public/user/${data.photo}?ts=${Date.now()}`} className='w-16 rounded-full object-cover' loading="lazy" />
+                data.photo === null ? <User className='w-16 h-16 bg-white rounded-full stroke-blue' /> : <img src={`${import.meta.env.VITE_BASE_URI}/storage/v1/object/public/user/${data.photo}?ts=${Date.now()}`} className='w-16 rounded-full object-cover' loading="lazy" />
             }
                 <span className="flex-1">{data.user_name}</span>
             </NavLink>
@@ -46,4 +49,4 @@ const SearchCard: React.FC<SearchCard> = ({ data }) => {
     )
 }
 
-export default SearchCard
+export default UserCard

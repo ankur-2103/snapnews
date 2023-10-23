@@ -9,22 +9,24 @@ import { GET_USER_POSTS } from "../utils/queries";
 import { setMyPosts } from "../slice/postsSlice";
 import { LogOut, User, Edit2 } from 'react-feather';
 import { supabase } from '../utils/supabase';
-import EditAvatar from './EditAvatar';
+import EditAvatar from '../components/EditAvatarModal';
 import { NavLink } from "react-router-dom";
+
+/* This file creates profile page */
 
 const Profile = () => {
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isDeletModalOpen, setIsDeleteModalOpen] = useState<boolean>(false); 
-    const [isEditAvatarOpen, setIsEditAvatarOpen] = useState<boolean>(false); 
-    const myPosts = useSelector((state: RootState) => state.posts.myPosts);
-    const user_id = useSelector((state: RootState) => state.auth.user?.id);
-    const user_name = useSelector((state: RootState) => state.auth.user?.user_name);
-    const user_photo = useSelector((state: RootState) => state.auth.user?.photo);
-    const following = useSelector((state: RootState) => state.auth.user?.following);
-    const saved = useSelector((state: RootState) => state.auth.user?.saved);
-    const { refetch } = useQuery(GET_USER_POSTS, {variables:{"user_id":user_id}});
-    const dispatch = useDispatch();
+    const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false); // state for  create post modal
+    const [isDeletePostModalOpen, setIsDeletePostModalOpen] = useState<boolean>(false); // state for delete post modal
+    const [isEditAvatarOpen, setIsEditAvatarOpen] = useState<boolean>(false); // state for edit avatar modal
+    const myPosts = useSelector((state: RootState) => state.posts.myPosts); // get user posts from redux
+    const user_id = useSelector((state: RootState) => state.auth.user?.id); // get user id from redux
+    const user_name = useSelector((state: RootState) => state.auth.user?.user_name); // get user name from redux
+    const user_photo = useSelector((state: RootState) => state.auth.user?.photo); // get user photo from redux
+    const following = useSelector((state: RootState) => state.auth.user?.following); // get user following from redux
+    const saved = useSelector((state: RootState) => state.auth.user?.saved); // get user saved post from redux
+    const { refetch } = useQuery(GET_USER_POSTS, {variables:{"user_id":user_id}}); // query for user posts
+    const dispatch = useDispatch(); // dispacth event for redux
 
     useEffect(() => {
         refetch({ variables: { "user_id": user_id } }).then((res) => {
@@ -34,7 +36,7 @@ const Profile = () => {
             }
             console.log(newData)
         });
-    }, [isModalOpen, dispatch, user_id, refetch, isDeletModalOpen, isEditAvatarOpen])
+    }, [isCreatePostModalOpen, dispatch, user_id, refetch, isDeletePostModalOpen, isEditAvatarOpen])
 
     return (
         <div className="flex flex-col w-full gap-4">
@@ -43,7 +45,7 @@ const Profile = () => {
                 <span className='flex gap-4 relative flex-col justify-center items-center'>
                     <span className='relative h-28'>
                         {
-                            user_photo === null ? <User className='w-24 h-24 bg-white rounded-full stroke-blue' /> : <img src={`https://qgwjrqfxjnfydbioujcu.supabase.co/storage/v1/object/public/user/${user_photo}?ts=${Date.now()}`} className='w-28 h-28 rounded-full object-cover ring-2 ring-white' />
+                            user_photo === null ? <User className='w-28 h-28 bg-white rounded-full stroke-blue' /> : <img src={`${import.meta.env.VITE_BASE_URI}/storage/v1/object/public/user/${user_photo}?ts=${Date.now()}`} className='w-28 h-28 rounded-full object-cover ring-2 ring-white' />
                         }
                         <button className='absolute rounded-full bg-[#e0e0e0] ring-2 ring-white p-2 right-0 bottom-0 cursor-pointer' onClick={()=>setIsEditAvatarOpen(true)}>
                             <Edit2 className='stroke-pink w-5 h-5'/>
@@ -62,20 +64,20 @@ const Profile = () => {
                     {myPosts.length===0 ?
                     <span className="flex flex-col h-full justify-center gap-2">
                         <span>No posts available!</span>
-                        <button className="bg-blue text-white p-2 rounded-lg" onClick={()=>setIsModalOpen(true)}>Create Post</button>
+                        <button className="bg-blue text-white p-2 rounded-lg" onClick={()=>setIsCreatePostModalOpen(true)}>Create Post</button>
                     </span>
                     :
                     <div className="flex flex-col gap-2 md:w-full">
-                        <button className="bg-blue text-white p-2 rounded-lg" onClick={() => setIsModalOpen(true)}>Create Post</button>
+                        <button className="bg-blue text-white p-2 rounded-lg" onClick={() => setIsCreatePostModalOpen(true)}>Create Post</button>
                         <span className="flex flex-col gap-6">
-                            {myPosts.map((val, index) => <PostCard key={index} data={val} isDeletModalOpen={isDeletModalOpen} handleDeletModalOpen={(data)=>setIsDeleteModalOpen(data)}/>)}
+                            {myPosts.map((val, index) => <PostCard key={index} data={val} isDeletModalOpen={isDeletePostModalOpen} handleDeletModalOpen={(data)=>setIsDeletePostModalOpen(data)}/>)}
                         </span>
                         <span className=" text-center w-full">End</span>
                     </div>
                     }        
                 </div>
             </span>
-            <Modal children={<PostModal post={null} close={() => setIsModalOpen(false)} />} isModalOpen={isModalOpen} />
+            <Modal children={<PostModal close={() => setIsCreatePostModalOpen(false)} />} isModalOpen={isCreatePostModalOpen} />
             <Modal children={<EditAvatar close={() => setIsEditAvatarOpen(false)} />} isModalOpen={isEditAvatarOpen} />
         </div>
     )

@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { supabase } from '../utils/supabase';
 import { useNavigate } from 'react-router-dom';
-import GoogleIcon from '../assets/google-icon.svg';
 import Logo from '../assets/spannews-logo.svg';
 import { NavLink } from 'react-router-dom';
 
 const Signin = () => {
-    const navigate = useNavigate();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const navigate = useNavigate(); // used for navigating to other page
+    const [email, setEmail] = useState(''); // state for email
+    const [password, setPassword] = useState(''); // state for password
+    const [error, setError] = useState(''); // state for error
 
+    // handle sign in
     const handleSignin = async () => {
         try {
             const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -21,16 +21,9 @@ const Signin = () => {
                 setError('')
             }
         } catch (error:any) {
-            console.error('Signin error:', error.message);
+            console.error('Signin error: ', error.message);
         }
     };
-
-    const handleGoogle = async () => {
-        await supabase.auth.signInWithOAuth({
-            provider:'google'
-        })
-        navigate('/')
-    }
 
     return (
         <div className='flex flex-col md:flex-row justify-center items-center w-full h-[100vh] md:text-md text-lg text-white'>
@@ -58,11 +51,10 @@ const Signin = () => {
                             autoComplete='current-password'
                         />
                         <span>{error}</span>
-                        <button onClick={handleSignin} className='rounded-md ring-2 ring-white w-full p-1'>Sign In</button>
+                        <button onClick={handleSignin} className='rounded-md bg-white text-blue w-full p-1'>Sign In</button>
                     </span>
                     <span className='flex flex-col items-center gap-2 px-4 py-2'>
                         <span>OR</span>
-                        <button onClick={handleGoogle} className='flex items-center justify-center rounded-md ring-2 ring-white w-full p-1 gap-2'><img src={GoogleIcon} className='w-8' />Sign In with Google</button>
                         <span>Don't have accout <NavLink to={'/signup'} className='underline font-semibold underline-offset-4'>Create one</NavLink></span>
                     </span>
                 </div>

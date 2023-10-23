@@ -5,11 +5,13 @@ import { useQuery } from "@apollo/client";
 import { GET_POST_ID } from "../utils/queries";
 import { useEffect } from "react";
 
+/* This page creates single post page */
+
 const Post = () => {
 
-    const {postId:id} = useParams();
-    const [data, setData] = useState<any>(null);
-    const { refetch } = useQuery(GET_POST_ID, { variables: { "id": id } });
+    const {postId:id} = useParams(); // get post id form route
+    const [data, setData] = useState<any>(null); // state for post data
+    const { refetch } = useQuery(GET_POST_ID, { variables: { "id": id } }); // query post data using id
 
     useEffect(() => {
         refetch({ "id": id }).then((res:any) => {
@@ -20,7 +22,6 @@ const Post = () => {
         });
     },[id,refetch])
 
-    // console.log({"id":param.postId})
     return (
         <div>
             

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../utils/supabase';
 import { useNavigate } from 'react-router-dom';
-import GoogleIcon from '../assets/google-icon.svg';
 import Logo from '../assets/spannews-logo.svg';
 import { NavLink } from 'react-router-dom';
 import { CREATE_USER } from '../utils/queries';
@@ -9,35 +8,30 @@ import { useMutation } from '@apollo/client';
 import { generateUserName } from '../utils/utils';
 
 const Signup = () => {
-    // const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [addUser] = useMutation(CREATE_USER);
+    const navigate = useNavigate();// used for navigating to other page
+    const [email, setEmail] = useState('');// state for email
+    const [password, setPassword] = useState('');// state for password
+    const [error, setError] = useState(''); // state for error
+    const [addUser] = useMutation(CREATE_USER); // mutation for create user
 
+    // handle sign up
     const handleSignup = async () => {
         try {
             const { data: { user }, error } = await supabase.auth.signUp({email:email, password:password});
             
             if (error) {
-                setError('Signup error:'+ error.message);
+                setError('Signup error: '+ error.message);
             } else {
                 if (user?.id) {
-                    addUser({ variables: { id: user?.id, user_name: generateUserName(user.user_metadata.name, email) + "#" +user.id.substring(0,4) } }).then(()=>navigate('/'))
+                    addUser({ variables: { id: user?.id, user_name: generateUserName(user.user_metadata.name, email) + "#" + user.id.substring(0, 4) } }).then(() => {
+                        navigate('/')
+                    })
                 }
             }
         } catch (error:any) {
-            console.error('Signup error:', error.message);
+            console.error('Signup error: ', error.message);
         }
     };
-
-    const handleGoogle = async () => {
-        await supabase.auth.signInWithOAuth({
-            provider:'google'
-        })
-        navigate("/");
-    }
 
     return (
         <div className='flex flex-col md:flex-row justify-center items-center w-full h-[100vh] md:text-md text-lg text-white'>
@@ -65,11 +59,10 @@ const Signup = () => {
                             autoComplete='current-password'
                         />
                         <span>{error}</span>
-                        <button onClick={handleSignup} className='rounded-md ring-2 ring-white w-full p-1'>Sign Up</button>
+                        <button onClick={handleSignup} className='rounded-md bg-white text-blue w-full p-1'>Sign Up</button>
                     </span>
                     <span className='flex flex-col items-center gap-2 px-4 py-2'>
                         <span>OR</span>
-                        <button onClick={handleGoogle} className='flex items-center justify-center rounded-md ring-2 ring-white w-full p-1 gap-2'><img src={GoogleIcon} className='w-8' />Sign Up with Google</button>
                         <span>Already have accout <NavLink to={'/signin'} className='underline font-semibold underline-offset-4'>Sign Up</NavLink></span>
                     </span>
                 </div>

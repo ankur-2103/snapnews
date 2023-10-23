@@ -3,13 +3,15 @@ import { RootState } from "../store";
 import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_FOLLOWING } from "../utils/queries";
-import SearchCard from "../components/SearchCard";
+import UserCard from "../components/UserCard";
+
+/* This file creates page for displaying user followings */
 
 const Following = () => {
 
-    const followings = useSelector((state: RootState) => state.auth.user?.following);
-    const [data, setData] = useState<any[]>([]);
-    const { refetch } = useQuery(GET_FOLLOWING, { variables: { "id": followings } });
+    const followings = useSelector((state: RootState) => state.auth.user?.following); // get user followings from redux
+    const [data, setData] = useState<any[]>([]); // data of following users
+    const { refetch } = useQuery(GET_FOLLOWING, { variables: { "id": followings } }); // query following users info
 
     useEffect(() => {
         refetch({ "id": followings }).then((res:any) => {
@@ -28,7 +30,7 @@ const Following = () => {
                 :
                 <div className="flex flex-col gap-2">
                     {data.map((val) =>
-                        <SearchCard key={val.id} data={val}/>
+                        <UserCard key={val.id} data={val}/>
                     )}
                 </div>
             }

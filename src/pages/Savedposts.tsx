@@ -5,11 +5,13 @@ import { useQuery } from "@apollo/client";
 import {  GET_SAVED_POSTS } from "../utils/queries";
 import PostCard from "../components/PostCard";
 
+/* This file creates saved posts page */
+
 const Savedposts = () => {
 
-    const savedPosts = useSelector((state: RootState) => state.auth.user?.saved);
-    const [data, setData] = useState<any[]>([]);
-    const { refetch } = useQuery(GET_SAVED_POSTS, { variables: { "id": savedPosts } });
+    const savedPosts = useSelector((state: RootState) => state.auth.user?.saved); // get user saved post
+    const [data, setData] = useState<any[]>([]); // state for saved posts
+    const { refetch } = useQuery(GET_SAVED_POSTS, { variables: { "id": savedPosts } }); // query saved posts
 
     useEffect(() => {
         refetch({ "id": savedPosts }).then((res:any) => {

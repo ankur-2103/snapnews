@@ -10,12 +10,15 @@ import { useMutation } from '@apollo/client';
 import {  UPDATE_POST, UPDATE_USER } from '../utils/queries';
 import { addFollowing, addSavedPost, removeFollowing, removeSavedPost } from '../slice/authSlice';
 
+/* This component creates a post card used in news feed, profile, post and user pages */
+
 interface PostCardProps{
-    data: Post;
-    isDeletModalOpen: boolean;
-    handleDeletModalOpen: (post:boolean) => void
+    data: Post; // Post data
+    isDeletModalOpen: boolean; // state for delete modal from parent
+    handleDeletModalOpen: (post:boolean) => void // handle delete modal open and close from parent
 }
 
+//This function check links in description to avoid overflow of text
 const detectAndRenderLinks = (text:string) => {
 
     const urlRegex = /https?:\/\/[^\s/$.?#].[^\s]*/g;
@@ -38,32 +41,20 @@ const detectAndRenderLinks = (text:string) => {
     });
 };
 
-const PostCard: React.FC<PostCardProps> = ({ data,isDeletModalOpen, handleDeletModalOpen}) => {
-    const auth = useSelector((state: RootState) => state.auth.user);
-    const [post, setPost] = useState<Post>(data);
-    const isLike = post.likes.includes(auth!.id);
-    const savedPosts = useSelector((state: RootState) => state.auth.user?.saved);
-    const following = useSelector((state: RootState) => state.auth.user?.following);
-    const isFollowing = post===null ? false : following!.includes(post.user_id);
-    const isSaved = post === null ? false : savedPosts!.includes(post.id)
-    const filterDescription = detectAndRenderLinks(post===null ? "" : post.description);
-    const [updatePost] = useMutation(UPDATE_POST);
-    const [updateUser] = useMutation(UPDATE_USER);
-    const dispatch = useDispatch();
-    console.log(isLike)
-
-    // const getPost = async () => {
-    //     await refetch({ "id": id }).then((res) => {
-    //         if (res.post.postsCollection.edges.length !== 0) {
-    //             const newpost:Post = res.post.postsCollection.edges[0].node
-    //             setPost(newpost);
-    //             setIsFollowing(following!.includes(newpost.user_id))
-    //             setIsLike(newpost.likes.includes(auth!.id));
-    //         }
-    //     })
-    // }
-    // getPost();
+const PostCard: React.FC<PostCardProps> = ({ data, isDeletModalOpen, handleDeletModalOpen}) => {
+    const auth = useSelector((state: RootState) => state.auth.user);// Get user from info redux
+    const [post, setPost] = useState<Post>(data);// Create a new state for post data
+    const isLike = post.likes.includes(auth!.id);// Check user has liked this post
+    const savedPosts = useSelector((state: RootState) => state.auth.user?.saved); // Get user has saved posts from redux
+    const following = useSelector((state: RootState) => state.auth.user?.following); // Get user has followings from redux
+    const isFollowing = post===null ? false : following!.includes(post.user_id); // Check user is following the owner of the post
+    const isSaved = post === null ? false : savedPosts!.includes(post.id) // Check user has saved the post 
+    const filterDescription = detectAndRenderLinks(post===null ? "" : post.description); // Get filtered discription for links
+    const [updatePost] = useMutation(UPDATE_POST); // Mutation for updating post 
+    const [updateUser] = useMutation(UPDATE_USER); // Mutation for updating user
+    const dispatch = useDispatch(); // Dispatch event for redux
     
+    // Handle user like for the post
     const handleLike = () => {
         if(post===null)return
         if (isLike) {
@@ -74,6 +65,7 @@ const PostCard: React.FC<PostCardProps> = ({ data,isDeletModalOpen, handleDeletM
         console.log("2")
     } 
 
+    // Handle user saved post
     const handleSave = () => {
         if(post===null)return
         if (isSaved) {
@@ -83,6 +75,7 @@ const PostCard: React.FC<PostCardProps> = ({ data,isDeletModalOpen, handleDeletM
         }
     }
     
+    // Handle user following for the owner of the post
     const handleFollowing = () => {
         if(post===null)return
         if (isFollowing) {
@@ -101,9 +94,9 @@ const PostCard: React.FC<PostCardProps> = ({ data,isDeletModalOpen, handleDeletM
         }
         
         if (post.likes !== data.likes) {
-            updateLikes();
+            updateLikes(); // Update likes of the post
         }
-        updateUserData()
+        updateUserData() // Update user info
 
     },[ updatePost, post, savedPosts, auth?.id, following,updateUser,data])
     
@@ -113,7 +106,7 @@ const PostCard: React.FC<PostCardProps> = ({ data,isDeletModalOpen, handleDeletM
             <span className='flex flex-col gap-2'>
                 <span className="flex h-12 items-center gap-2 ">
                     {
-                        post.user_photo === null  ? <User className='w-10 h-10 bg-white rounded-full stroke-blue' /> : <img src={`https://qgwjrqfxjnfydbioujcu.supabase.co/storage/v1/object/public/user/${post.user_photo}?ts=${Date.now()}`} className='w-10 rounded-full object-cover' />
+                        post.user_photo === null  ? <User className='w-10 h-10 bg-white rounded-full stroke-blue' /> : <img src={`${import.meta.env.VITE_BASE_URI}/storage/v1/object/public/user/${post.user_photo}?ts=${Date.now()}`} className='w-10 rounded-full object-cover' />
                     }
                     <span className='font-bold'>{post.user_name}</span>
                     <button className={`p-1 h-fit font-medium px-2 rounded-md ${auth?.id===post.user_id && "hidden"} ${isFollowing ? "rounded-md bg-[#e0e0e0]" : "bg-blue text-white"}`} onClick={handleFollowing}>{isFollowing ? "Following" : "Follow"}</button>
@@ -122,7 +115,7 @@ const PostCard: React.FC<PostCardProps> = ({ data,isDeletModalOpen, handleDeletM
                 <span className='text-[#3748b1] font-medium'>{post.tags.join(", ")}</span>
                 <span className='flex justify-center items-center'>
                     {post.photo !== null
-                        && <img src={`https://qgwjrqfxjnfydbioujcu.supabase.co/storage/v1/object/public/posts/${post.photo}`} className='max-h-96 object-cover max-w-full w-96' />}
+                        && <img src={`${import.meta.env.VITE_BASE_URI}/storage/v1/object/public/posts/${post.photo}`} className='max-w-full w-96' loading='lazy' />}
                 </span> 
             </span>
             <span className={`p-2 ${post.user_id === auth?.id ? "flex" : "hidden"}`}>

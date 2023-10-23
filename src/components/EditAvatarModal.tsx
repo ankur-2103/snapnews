@@ -7,23 +7,26 @@ import { supabase } from "../utils/supabase";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_USER_POSTS, UPDATE_POSTS, UPDATE_USER } from "../utils/queries";
 
+/* This component creates user photo update modal */
+
 interface EditAvatarProps{
-    close: () => void; 
+    close: () => void; // handle modal close event
 }
 
-const fileInputTypes = 'image/png, image/jpeg';
+const fileInputTypes = 'image/png, image/jpeg'; // input types for accepting images in edit avatar modal
 
 const EditAvatar: React.FC<EditAvatarProps> = ({close}) => {
     
-    const userPhoto = useSelector((state:RootState)=>state.auth.user?.photo)
-    const userId = useSelector((state: RootState) => state.auth.user?.id)
-    const [selectedMedia, setSelectedMedia] = useState<File | null>(null);
-    let userPostIds:any[] = [];
-    const ref = useRef<AvatarEditor | null>(null)
-    const [updateUser] = useMutation(UPDATE_USER);
-    const [updatePosts] = useMutation(UPDATE_POSTS);
-    const { refetch } = useQuery(GET_USER_POSTS, { variables: { "user_id": userId } });
+    const userPhoto = useSelector((state:RootState)=>state.auth.user?.photo) // get user photo
+    const userId = useSelector((state: RootState) => state.auth.user?.id) // get user id
+    const [selectedMedia, setSelectedMedia] = useState<File | null>(null); // selected media
+    let userPostIds:any[] = []; // user post ids
+    const ref = useRef<AvatarEditor | null>(null); // ref for img input element
+    const [updateUser] = useMutation(UPDATE_USER); // mutation for update user
+    const [updatePosts] = useMutation(UPDATE_POSTS); // mutaion for upadate post
+    const { refetch } = useQuery(GET_USER_POSTS, { variables: { "user_id": userId } }); // query for getting user posts
     
+    // handle media change for input element 
     const handleMediaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
@@ -31,40 +34,39 @@ const EditAvatar: React.FC<EditAvatarProps> = ({close}) => {
         }
     };
 
+    // handle media upload
     const handleUpload = async () => {
         if (ref) {
-            const canvas = ref.current?.getImageScaledToCanvas();
+            const canvas = ref.current?.getImageScaledToCanvas(); // get selected area of media
             const blob:any = await new Promise((resolve) => {
                 canvas?.toBlob((b) => resolve(b as Blob))
-            });
+            }); // generate blob of canvas
 
             if (userPhoto === null) {
                 const { error } = await supabase.storage.from('user').upload(userId + ".png", blob, {
                     cacheControl: '3600',
                     upsert: true,
-                })
+                }) // upload user photo
                 if (error) return
+                await updateUser({ variables: { "id": userId, "user": { "photo": userId + ".png" } } }) // update user
             } else {
                 const { error } = await supabase.storage.from('user').update(userId + ".png", blob, {
                     cacheControl: '0',
                     upsert: true,
-                })
+                }) // update user photo
                 if (error) return  
             }
-            await updateUser({ variables: { "id": userId, "user": { "photo": userId + ".png" } } })
 
             await refetch({ "user_id": userId }).then((res) => {
-                console.log(res)
                 if (res.data.postsCollection.edges.length !== 0) {
                     userPostIds = res.data.postsCollection.edges.map((data:any)=>data.node.id)
                 }
-            })
+            }) // get user post ids
 
-            console.log({ variables: { "post": { "user_photo": userId + ".png" }, "id": userPostIds } })
 
             await updatePosts({ variables: { "post": { "user_photo": userId + ".png" }, "id": userPostIds } }).then((res) => {
                 console.log(res)
-            });
+            }); // update user posts
             
             close()
         }
@@ -75,7 +77,7 @@ const EditAvatar: React.FC<EditAvatarProps> = ({close}) => {
             <span>Update Avatar</span>
             <span className="h-24">
                 {
-                    userPhoto === null ? <User className='w-24 h-24 bg-white rounded-full stroke-blue' /> : <img src={`https://qgwjrqfxjnfydbioujcu.supabase.co/storage/v1/object/public/user/${userPhoto}?ts=${Date.now()}`} className='w-24 rounded-full' />
+                    userPhoto === null ? <User className='w-24 h-24 bg-white rounded-full stroke-blue' /> : <img src={`${import.meta.env.VITE_BASE_URI}/storage/v1/object/public/user/${userPhoto}?ts=${Date.now()}`} className='w-24 rounded-full' />
                 }          
             </span>
             {selectedMedia && 

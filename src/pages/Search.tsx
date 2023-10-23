@@ -1,7 +1,9 @@
 import { useQuery } from "@apollo/client";
 import React, { useState, useEffect, useRef } from "react";
 import { GET_USER_USERNAME } from "../utils/queries";
-import SearchCard from "../components/SearchCard";
+import SearchCard from "../components/UserCard";
+
+/* This file creates search page */
 
 const Search = () => {
 

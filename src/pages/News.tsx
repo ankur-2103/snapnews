@@ -6,19 +6,20 @@ import PostCard from '../components/PostCard';
 import { useQuery } from '@apollo/client';
 import { GET_NEWS_POSTS } from '../utils/queries';
 
+/* This file creates page for news feed */
+
 const News = () => {
-    const following = useSelector((state: RootState) => state.auth.user?.following);
-    const newsPosts = useSelector((state: RootState) => state.posts.newsPosts);
-    const dispatch = useDispatch()
-    
-    const { refetch } = useQuery(GET_NEWS_POSTS, { variables: { "user_id": following } });
+
+    const following = useSelector((state: RootState) => state.auth.user?.following); // get user followings from redux
+    const newsPosts = useSelector((state: RootState) => state.posts.newsPosts); // get newsposts from redux
+    const dispatch = useDispatch() // dispatch event for redux
+    const { refetch } = useQuery(GET_NEWS_POSTS, { variables: { "user_id": following } }); // query news posts
     
     useEffect(() => {
         refetch({ variables: { "user_id": following } }).then((res) => {
             const newData = res.data?.postsCollection?.edges.length !== 0 ? res.data?.postsCollection?.edges?.map((val: any) => val.node) : [] 
             if (newData) {
                 dispatch(setNewsPosts(newData))
-                console.log(newData)
             }
         });
     },[following,dispatch,refetch])

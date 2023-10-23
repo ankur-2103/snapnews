@@ -6,10 +6,11 @@ import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat, ApolloProvid
 import store from './store.ts';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-const httpLink = new HttpLink({ uri: import.meta.env.VITE_URI });
+const httpLink = new HttpLink({ uri: import.meta.env.VITE_DB_URI }); // supabase http link
 
+// create middleware
 const authMiddleware = new ApolloLink((operation, forward) => {
-  const token = import.meta.env.VITE_TOKEN; // Replace with your Supabase Auth token
+  const token = import.meta.env.VITE_TOKEN; 
   operation.setContext({
     headers: {
       'apikey': token,
@@ -20,6 +21,7 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
+// create apollo client
 const client = new ApolloClient({
   cache: new InMemoryCache(),
   link: concat(authMiddleware, httpLink),

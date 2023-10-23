@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 
+// get user info using id
 const GET_USER_ID = gql`
 query GetUser($id:String!){
     usersCollection(filter:{id: {eq: $id}}){
@@ -16,7 +17,7 @@ query GetUser($id:String!){
     }
 }
 `
-
+// get user info using username
 const GET_USER_USERNAME = gql`
 query GetUser($user_name:String!){
     usersCollection(filter:{user_name: {startsWith: $user_name}}){
@@ -30,6 +31,8 @@ query GetUser($user_name:String!){
     }
 }
 `
+
+// get users ids using usernames
 const GET_USERS_ID = gql`
 query GetUser($user_name:[String!]){
     usersCollection(filter:{user_name: {in: $user_name}}){
@@ -42,6 +45,7 @@ query GetUser($user_name:[String!]){
     }
 }
 `
+// get users info using ids
 const GET_USERS = gql`
 query GetUser($id:[String!]){
     usersCollection(filter:{id: {in: $id}}){
@@ -56,6 +60,7 @@ query GetUser($id:[String!]){
 }
 `
 
+// get user followings using ids
 const GET_FOLLOWING = gql`
 query GetUser($id:[String!]){
     usersCollection(filter:{id: {in: $id}}){
@@ -70,6 +75,7 @@ query GetUser($id:[String!]){
 }
 `
 
+// create user
 const CREATE_USER = gql`
 mutation addUser($id:String!, $user_name:String!){
     insertIntoUsersCollection(objects: {id: $id, user_name:$user_name}){
@@ -84,6 +90,7 @@ mutation addUser($id:String!, $user_name:String!){
 }
 `
 
+// update user using id
 const UPDATE_USER = gql`
 mutation Up($user:UsersUpdateInput!, $id:String!){
     updateUsersCollection(set:$user, filter:{id:{eq:$id}}){
@@ -94,6 +101,7 @@ mutation Up($user:UsersUpdateInput!, $id:String!){
 }
 `;
 
+// create post
 const CREATE_POST = gql`
 mutation createPost ($id:String!, $user_id:String!, $user_name:String!, $user_photo:String!, $description:String!, $tags:[String]!, $photo:String){
     insertIntoPostsCollection(objects:{id:$id, user_id:$user_id, user_name:$user_name, user_photo:$user_photo,description:$description, tags:$tags, photo:$photo}){
@@ -102,6 +110,7 @@ mutation createPost ($id:String!, $user_id:String!, $user_name:String!, $user_ph
 }
 `;
 
+// update post
 const UPDATE_POST = gql`
 mutation Update($post:PostsUpdateInput!, $id:String!){
     updatePostsCollection(set:$post, filter:{id:{eq:$id}}){
@@ -120,6 +129,7 @@ mutation Update($post:PostsUpdateInput!, $id:String!){
 }
 `;
 
+// update multiple posts using ids
 const UPDATE_POSTS = gql`
 mutation Update($post:PostsUpdateInput!, $id:[String!]){
     updatePostsCollection(set:$post, filter:{id:{in:$id}}){
@@ -138,6 +148,7 @@ mutation Update($post:PostsUpdateInput!, $id:[String!]){
 }
 `;
 
+// get user posts
 const GET_USER_POSTS = gql`
 query GetUser($user_id:String!){
     postsCollection(filter:{user_id: {eq: $user_id}}){
@@ -157,6 +168,8 @@ query GetUser($user_id:String!){
     }
 }
 `
+
+// get post info using id
 const GET_POST_ID = gql`
 query GetPosts($id:String!){
     postsCollection(filter:{id:{eq:$id}}){
@@ -176,9 +189,11 @@ query GetPosts($id:String!){
     }
 }
 `
+
+// get user news posts
 const GET_NEWS_POSTS = gql`
-query GetUser($user_id:[String!]){
-    postsCollection(filter:{user_id: {in: $user_id}}){
+query GetPosts($user_id:[String!]){
+    postsCollection(filter:{user_id: {in: $user_id}}, orderBy:{created_at:DescNullsFirst}){
         edges{
             node{
                 id
@@ -196,6 +211,7 @@ query GetUser($user_id:[String!]){
 }
 `
 
+// get user saved posts
 const GET_SAVED_POSTS = gql`
 query GetUser($id:[String!]){
     postsCollection(filter:{id: {in: $id}}){
@@ -216,6 +232,7 @@ query GetUser($id:[String!]){
 }
 `
 
+// delete post
 const DELETE_POST = gql`
 mutation DeletePost($id:String!){
     deleteFromPostsCollection(filter:{id:{eq:$id}}){

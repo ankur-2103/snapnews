@@ -1,6 +1,7 @@
 // authSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+// User type
 export interface User{
   id: string;
   user_name:string;
@@ -10,16 +11,19 @@ export interface User{
   notifications: any[];
 }
 
+// Auth type
 interface AuthState {
-  user: User | null; // Adjust the user type based on your Supabase user structure
+  user: User | null;
   isAuthenticated: boolean;
 }
 
+// initial state
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
 };
 
+// auth slice
 const authSlice = createSlice({
   name: 'auth',
   initialState,

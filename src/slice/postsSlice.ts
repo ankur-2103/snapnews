@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+// post type
 export interface Post{
   id: string,
   description: string ,
@@ -12,25 +13,23 @@ export interface Post{
   likes: string[]
 }
 
+// slice state
 interface PostsState {
-  posts: Post[]; // Adjust the user type based on your Supabase user structure
   myPosts: Post[];
   newsPosts: Post[];
 }
 
+// initial state
 const initialState: PostsState = {
-  posts: [],
   myPosts: [],
   newsPosts:[]  
 };
 
+// post slice
 const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
-    setPosts: (state, action: PayloadAction<Post[]>) => {
-      state.posts = action.payload;
-    },
     setMyPosts: (state, action: PayloadAction<Post[]>) => {
       state.myPosts = action.payload;
     },
@@ -40,6 +39,6 @@ const postsSlice = createSlice({
   },
 });
 
-export const { setPosts, setMyPosts, setNewsPosts } = postsSlice.actions;
+export const { setMyPosts, setNewsPosts } = postsSlice.actions;
 
 export default postsSlice.reducer;

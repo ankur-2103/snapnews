@@ -17,15 +17,17 @@ import Post from './Post';
 import Following from './Following';
 import Savedposts from './Savedposts';
 
+/* This is main page of the app where othe pages are rendered */
+
 const Home = () => {
-    const location = useLocation();
-    const user_name = useSelector((state: RootState) => state.auth.user?.user_name);
-    const user_photo = useSelector((state: RootState) => state.auth.user?.photo);
-    const userId = useSelector((state: RootState) => state.auth.user?.id);
-    const notifications = useSelector((state: RootState) => state.auth.user?.notifications);
-    const { refetch } = useQuery(GET_USER_ID, { variables: { "id": userId } });
-    const dispatch = useDispatch()
-    const hasNewNotification = notifications?.reduce((prev, curr: any) => prev || curr.isNew, false)
+    const location = useLocation(); // get current location of route
+    const user_name = useSelector((state: RootState) => state.auth.user?.user_name); // get user name from redux
+    const user_photo = useSelector((state: RootState) => state.auth.user?.photo); // get user photo from redux
+    const userId = useSelector((state: RootState) => state.auth.user?.id); // get user id from reudx
+    const notifications = useSelector((state: RootState) => state.auth.user?.notifications); // get user notifications from redux
+    const { refetch } = useQuery(GET_USER_ID, { variables: { "id": userId } }); // query for getting user info
+    const dispatch = useDispatch() // dispatch event for redux
+    const hasNewNotification = notifications?.reduce((prev, curr: any) => prev || curr.isNew, false) // check user has new notifications
     
 
     useEffect(() => {
@@ -47,7 +49,7 @@ const Home = () => {
                     <span className='flex flex-col  bg-white rounded-lg'>
                         <span className='flex flex-col gap-2 w-full h-44 items-center justify-center bg-[transparent] p-8'>
                             {
-                                user_photo === null ? <User className='w-24 h-24 bg-white rounded-full stroke-blue' /> : <img src={`https://qgwjrqfxjnfydbioujcu.supabase.co/storage/v1/object/public/user/${user_photo}?ts=${Date.now()}`} className='w-28 rounded-full object-cover' />
+                                user_photo === null ? <User className='w-24 h-24 bg-white rounded-full stroke-blue' /> : <img src={`${import.meta.env.VITE_BASE_URI}/storage/v1/object/public/user/${user_photo}?ts=${Date.now()}`} className='w-28 rounded-full object-cover' />
                             }
                             <span className='font-bold text-xl text-blue'>{user_name}</span>
                         </span>

@@ -5,24 +5,21 @@ import { useMutation } from "@apollo/client";
 import { UPDATE_USER } from "../utils/queries";
 import NotificationCard from "../components/NotificationCard";
 
+/* This file creates notification page */
+
 const Notifications = () => {
 
-    const notifications = useSelector((state: RootState) => state.auth.user?.notifications);
-    const following = useSelector((state: RootState) => state.auth.user?.following);
-    const userId = useSelector((state: RootState) => state.auth.user?.id);
-    const [updateUser] = useMutation(UPDATE_USER);
+    const notifications = useSelector((state: RootState) => state.auth.user?.notifications); // get user notifications from redux
+    const userId = useSelector((state: RootState) => state.auth.user?.id); // get user id from redux
+    const [updateUser] = useMutation(UPDATE_USER); // mutation for update user
     const seenNotification = notifications?.map((val:object) => {
         return JSON.stringify({
             ...val,
             "isNew":false
         })
-    })
+    }) // mark notifications as seen
     
 
-    console.log(seenNotification)
-
-    // <!--  -->
-    
     useEffect(() => {
         const markAsSeen = async () => {
             await updateUser({ variables: { "id": userId, "user": { "notifications": seenNotification } } }).then((res)=>console.log(res));
@@ -30,7 +27,7 @@ const Notifications = () => {
         return (() => {
             markAsSeen();
         })
-    },[following,updateUser,seenNotification,userId])
+    },[])
     
 
     return (

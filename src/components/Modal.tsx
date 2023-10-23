@@ -1,9 +1,11 @@
 import React, { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
+/* This component creates a basic structure of Modal */ 
+
 interface ModalProps {
-    children: ReactNode;
-    isModalOpen: boolean;
+    children: ReactNode; // Children to be rendered inside the modal
+    isModalOpen: boolean; // Check modal is open or close
 }
 
 const Modal: React.FC<ModalProps> = ({ children, isModalOpen}) => {

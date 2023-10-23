@@ -13,10 +13,10 @@ import { generateUserName } from './utils/utils';
 import PublicRoute from './routes/PublicRoute';
 
 const App = () => {
-  const dispatch = useDispatch();
-  const { refetch } = useQuery(GET_USER_ID, { variables: {id:"as"} })
-  const [addUser] = useMutation(CREATE_USER)
-  const navigate = useNavigate();
+  const dispatch = useDispatch();// dispatch event for redux
+  const { refetch } = useQuery(GET_USER_ID, { variables: {id:"as"} }) // query for getting user info using user id
+  const [addUser] = useMutation(CREATE_USER) // mutation for add user
+  const navigate = useNavigate(); // used for navigating to other page
 
   useEffect(() => {
     
@@ -38,7 +38,6 @@ const App = () => {
             });
           }
         });
-        navigate('/');
       } else {
         navigate('/signin')
       }
