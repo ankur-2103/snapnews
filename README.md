@@ -14,7 +14,6 @@
   - [Installation](#installation)
 - [Configuration](#configuration)
 - [Usage](#usage)
-- [Contributing](#contributing)
 
 ## Introduction
 
@@ -83,13 +82,3 @@ npm run dev
 This will start the development server. Open your browser and visit http://localhost:5173 to view the application.
 
 Check out the demo usage of this project [here](https://drive.google.com/file/d/1bRscpUy-DTFzvOOj_rAlO9uVGDIty7bC/view?usp=sharing).
-
-## Contributing
-
-We welcome contributions from the community. If you'd like to contribute to this project, please follow these guidelines :
-
-   1. Fork the repository.
-   2. Create a new branch for your feature or bug fix.
-   3. Make your changes and commit them.
-   4. Push your branch to your fork.
-   5. Create a pull request with a clear description of your changes.
