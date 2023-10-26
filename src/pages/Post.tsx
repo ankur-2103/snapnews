@@ -15,7 +15,6 @@ const Post = () => {
 
     useEffect(() => {
         refetch({ "id": id }).then((res:any) => {
-            console.log(res.data.postsCollection.edges)
             if (res.data.postsCollection.edges.length !== 0) {
                 setData(res.data.postsCollection.edges[0].node);
             }

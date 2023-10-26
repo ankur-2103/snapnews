@@ -34,7 +34,6 @@ const Profile = () => {
             if (newData) {
                 dispatch(setMyPosts(newData))
             }
-            console.log(newData)
         });
     }, [isCreatePostModalOpen, dispatch, user_id, refetch, isDeletePostModalOpen, isEditAvatarOpen])
 

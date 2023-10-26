@@ -62,7 +62,6 @@ const PostCard: React.FC<PostCardProps> = ({ data, isDeletModalOpen, handleDelet
         } else {
             setPost({ ...post, "likes": [...post.likes, auth!.id] });
         }
-        console.log("2")
     } 
 
     // Handle user saved post

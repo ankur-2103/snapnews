@@ -192,8 +192,8 @@ query GetPosts($id:String!){
 
 // get user news posts
 const GET_NEWS_POSTS = gql`
-query GetPosts($user_id:[String!]){
-    postsCollection(filter:{user_id: {in: $user_id}}, orderBy:{created_at:DescNullsFirst}){
+query GetPosts($user_id:[String!], $cursor:Cursor){
+    postsCollection(filter:{user_id: {in: $user_id}}, orderBy:{created_at:DescNullsFirst}, first:20, after:$cursor){
         edges{
             node{
                 id
@@ -206,6 +206,10 @@ query GetPosts($user_id:[String!]){
                 photo
                 likes
             }
+        }
+        pageInfo{
+          hasNextPage
+          endCursor
         }
     }
 }

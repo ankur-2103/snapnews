@@ -64,9 +64,7 @@ const EditAvatar: React.FC<EditAvatarProps> = ({close}) => {
             }) // get user post ids
 
 
-            await updatePosts({ variables: { "post": { "user_photo": userId + ".png" }, "id": userPostIds } }).then((res) => {
-                console.log(res)
-            }); // update user posts
+            await updatePosts({ variables: { "post": { "user_photo": userId + ".png" }, "id": userPostIds } }); // update user posts
             
             close()
         }

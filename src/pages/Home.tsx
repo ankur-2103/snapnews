@@ -1,5 +1,5 @@
 import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Logo from '../assets/spannews-logo.svg';
 import Notifications from './Notifications';
 import News from './News';
@@ -28,13 +28,12 @@ const Home = () => {
     const { refetch } = useQuery(GET_USER_ID, { variables: { "id": userId } }); // query for getting user info
     const dispatch = useDispatch() // dispatch event for redux
     const hasNewNotification = notifications?.reduce((prev, curr: any) => prev || curr.isNew, false) // check user has new notifications
-    
+    const ref = useRef<HTMLDivElement | null>(null)
 
     useEffect(() => {
         refetch({"id":userId}).then((res) => {
             if (res.data.usersCollection.edges.length) {
                 dispatch(setUser(res.data.usersCollection.edges[0].node));
-                // console.log(res.data)
             }
         })
     },[location,refetch,userId,dispatch])
@@ -69,9 +68,9 @@ const Home = () => {
                         <NavLink to={'/notifications'} className={`flex flex-1 relative gap-2 justify-center px-4 py-2 rounded-b-lg ${location.pathname === '/notifications' || location.pathname.includes("post") ? 'bg-blue text-white font-medium' : 'bg-white'}`}><Bell/>{(location.pathname === '/notifications' || location.pathname.includes("post"))&&"Notification"}<span className={`${hasNewNotification && location.pathname !== '/notifications' && !location.pathname.includes("post") && "animate-ping  bg-blue"} absolute inline-flex h-5 w-5 top-[20%]  rounded-full opacity-75`}></span></NavLink>
                         <NavLink to={'/profile'} className={`flex flex-1 gap-2 justify-center px-4 py-2 rounded-b-lg ${location.pathname === '/profile' || location.pathname.includes("following") || location.pathname.includes("saved") ? 'bg-blue text-white font-medium' : 'bg-white'}`}><User />{(location.pathname === '/profile' || location.pathname.includes("following") || location.pathname.includes("saved")) && "Profile"}</NavLink>
                     </span>
-                    <div className='flex flex-1 lg:w-[850px] lg:max-w-[850px] overflow-x-hidden justify-center p-4 overflow-auto scroll-smooth no-scrollbar'>
+                    <div id='scollableDiv' className='flex flex-1 lg:w-[850px] lg:max-w-[850px] overflow-x-hidden justify-center p-4 overflow-auto scroll-smooth no-scrollbar' ref={ref}>
                         <Routes >
-                            <Route path='/' element={<News/>} />
+                            <Route path='/' element={<News />} />
                             <Route path='/notifications' element={<Notifications/>} />
                             <Route path='/profile' element={<Profile/>} />
                             <Route path='/search' element={<SearchPage/>} />

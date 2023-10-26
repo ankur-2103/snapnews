@@ -22,7 +22,7 @@ const Notifications = () => {
 
     useEffect(() => {
         const markAsSeen = async () => {
-            await updateUser({ variables: { "id": userId, "user": { "notifications": seenNotification } } }).then((res)=>console.log(res));
+            await updateUser({ variables: { "id": userId, "user": { "notifications": seenNotification } } })
         }
         return (() => {
             markAsSeen();
